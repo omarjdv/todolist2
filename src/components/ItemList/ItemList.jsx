@@ -20,9 +20,9 @@ const ItemList = ({ text, id, onDelete, onChange, completed }) => {
         <input type="checkbox"
           className="custom-control-input"
           checked={completed}
+          onChange={onChangeItem}
           id={id}/>
         <label
-        onClick={onChangeItem}
           className={`custom-control-label  ${completed ? 'text-decoration' : ''}`}
           htmlFor={id}
           >{text}

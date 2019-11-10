@@ -3,6 +3,8 @@ import Header from 'components/Header';
 import List from 'components/List';
 import ButtonFilterHeader from 'components/ButtonFilterHeader';
 
+const url = 'http://localhost:3001';
+
 class Home extends Component {
 
   state = {
@@ -10,17 +12,46 @@ class Home extends Component {
     filterby: 'ALL'
   }
 
+  componentDidMount() {
+    fetch(url+'/')
+      .then(response => response.json())
+      .then(json => {
+        const jsonParsed = json.map(item => ({
+          text: item.text,
+          completed: item.completed,
+          id: item._id
+        }));
+
+        this.setState({ items: jsonParsed});
+      });
+  }
+
+
   onAdd = text => {
-    this.setState({
-      items: [
-        {
-          id: this.state.items.length + 1,
-          text,
-          completed: false
-        },
-        ...this.state.items,
-      ]
+    fetch(url+'/', {
+      method: 'POST',
+      body: JSON.stringify({
+        text,
+        completed: false,
+      }), // data can be `string` or {object}!
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json())
+    .catch(error => console.error('Error:', error))
+    .then(response => {
+      this.setState({
+        items: [
+         {
+           text: response.text,
+           id: response._id,
+           completed: response.completed,
+          },
+          ...this.state.items,
+        ]
+      });
     });
+
   }
 
   onChangeFilter = (filterby) => {
@@ -31,9 +62,18 @@ class Home extends Component {
 
   onDelete = (id) => {
     const { items } = this.state;
-    const NewList = items.filter(news => news.id !== id);
-    this.setState({ items: NewList });
+
+
+    fetch(url + '/' + id, {
+      method: 'DELETE',
+    }).then(res => res.json())
+    .catch(error => console.error('Error:', error))
+    .then(response => {
+      const NewList = items.filter(news => news.id !== id);
+      this.setState({ items: NewList });
+    });
    }
+
   onChangeTask = (id) => {
     console.log('hola', id);
     const { items } = this.state;
