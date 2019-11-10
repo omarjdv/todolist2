@@ -28,7 +28,8 @@ describe('test of ItemList component', () => {
   });
 
   it('should render contains ItemList Component', () => {
-    expect(wrapper.contains(<ItemList />));
+    const text = 'Hello';
+    expect(wrapper.contains(<ItemList text={text}/>));
   });
 
 

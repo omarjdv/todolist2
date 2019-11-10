@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'proptypes';
+import './styles.css';
 
 const Header = ({ onAdd } ) => {
 
@@ -11,7 +13,8 @@ const Header = ({ onAdd } ) => {
   }
 
   return (
-    <form onSubmit={click}>
+    <div>
+      <form onSubmit={click}>
       <div className="input-group mb-3">
         <input
           required
@@ -31,7 +34,12 @@ const Header = ({ onAdd } ) => {
         </div>
       </div>
     </form>
+  </div>
   );
+}
+
+Header.propTypes = {
+  onAdd: PropTypes.func.isRequired
 }
 
 export default Header;

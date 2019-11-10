@@ -27,5 +27,17 @@ describe('Test the Home component functionality', () => {
 
   });
 
+  it('shold eliminated the state correctly', () => {
+    const wrapper = shallow(<Home/>);
+    const instance = wrapper.instance();
+    expect(instance.state.items.length).toBe(0);
+    instance.onAdd('text 1');
+    expect(instance.state.items.length).toBe(1);
+    instance.onDelete(1);
+    expect(instance.state.items.length).toBe(0);
+
+
+  });
+
 });
 

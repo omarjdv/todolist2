@@ -1,0 +1,7 @@
+.custom-control{
+  display: flex !important;
+}
+
+.text-decoration{
+  text-decoration: line-through;
+}
