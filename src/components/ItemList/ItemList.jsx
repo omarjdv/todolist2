@@ -8,7 +8,7 @@ const ItemList = ({ text, id, onDelete, onChange, completed }) => {
   }
 
   const onChangeItem = () => {
-    onChange(id);
+    onChange( id, { completed: !completed });
   }
 
   return (

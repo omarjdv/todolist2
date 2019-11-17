@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import Header from 'components/Header';
 import List from 'components/List';
 import ButtonFilterHeader from 'components/ButtonFilterHeader';
-
-const url = 'http://localhost:3001';
+import todosServices from 'services/todos.services';
 
 class Home extends Component {
 
@@ -12,46 +11,23 @@ class Home extends Component {
     filterby: 'ALL'
   }
 
-  componentDidMount() {
-    fetch(url+'/')
-      .then(response => response.json())
-      .then(json => {
-        const jsonParsed = json.map(item => ({
-          text: item.text,
-          completed: item.completed,
-          id: item._id
-        }));
-
-        this.setState({ items: jsonParsed});
-      });
+  async componentDidMount() {
+    const mount = await todosServices.getTodos();
+    this.setState({ items: mount});
   }
 
-
-  onAdd = text => {
-    fetch(url+'/', {
-      method: 'POST',
-      body: JSON.stringify({
-        text,
-        completed: false,
-      }), // data can be `string` or {object}!
-      headers:{
-        'Content-Type': 'application/json'
-      }
-    }).then(res => res.json())
-    .catch(error => console.error('Error:', error))
-    .then(response => {
-      this.setState({
-        items: [
-         {
-           text: response.text,
-           id: response._id,
-           completed: response.completed,
-          },
-          ...this.state.items,
-        ]
-      });
+ onAdd = async (text) => {
+  const add = await todosServices.addTodos(text);
+    this.setState({
+      items: [
+        {
+          text: add.text,
+          id: add._id,
+          completed: add.completed,
+        },
+        ...this.state.items,
+      ]
     });
-
   }
 
   onChangeFilter = (filterby) => {
@@ -60,34 +36,27 @@ class Home extends Component {
     });
   }
 
-  onDelete = (id) => {
+  onDelete = async (id) => {
     const { items } = this.state;
-
-
-    fetch(url + '/' + id, {
-      method: 'DELETE',
-    }).then(res => res.json())
-    .catch(error => console.error('Error:', error))
-    .then(response => {
+    const isdelete = await todosServices.deleteTodos(id);
+    if(isdelete){
       const NewList = items.filter(news => news.id !== id);
       this.setState({ items: NewList });
-    });
-   }
+    }
+  }
 
-  onChangeTask = (id) => {
-    console.log('hola', id);
+  onChangeTask = async (id, body) => {
+    console.log("Modificó");
     const { items } = this.state;
-    const newItem = items.map(item => {
-        if (item.id === id){
-          return({
-              ...item,
-              completed: !item.completed
-          });
-        }
-        return item;
+    const itemUpdated = await todosServices.changeTodos(id,body);
+    const newItems = items.map(item => {
+      if (item.id === id){
+        return(itemUpdated);
+      }
+      return item;
     });
     this.setState({
-      items: newItem
+      items: newItems
     });
   }
 
